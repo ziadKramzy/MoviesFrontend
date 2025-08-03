@@ -71,9 +71,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
+    // Listen for custom auth state change events
+    const handleAuthStateChange = (e: CustomEvent) => {
+      const { user, token } = e.detail;
+      setState({
+        user,
+        token,
+        isAuthenticated: true,
+        loading: false,
+      });
+    };
+
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('authStateChanged', handleAuthStateChange as EventListener);
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authStateChanged', handleAuthStateChange as EventListener);
     };
   }, []);
 

@@ -23,6 +23,11 @@ export const useSignup = () => {
       // Invalidate auth queries
       queryClient.invalidateQueries({ queryKey: authKeys.all });
       
+      // Force auth context to update by dispatching a custom event
+      window.dispatchEvent(new CustomEvent('authStateChanged', {
+        detail: { user: response.user, token: response.token }
+      }));
+      
       toast.success('Account created successfully!');
     },
     onError: (error: any) => {
@@ -49,8 +54,10 @@ export const useSignin = () => {
         isAuthenticated: true,
       });
       
-      // Force a window reload to ensure all components get the new auth state
-      window.dispatchEvent(new Event('storage'));
+      // Force auth context to update by dispatching a custom event
+      window.dispatchEvent(new CustomEvent('authStateChanged', {
+        detail: { user: response.user, token: response.token }
+      }));
       
       toast.success('Welcome back!');
     },
